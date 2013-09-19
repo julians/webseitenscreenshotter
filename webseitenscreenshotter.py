@@ -3,6 +3,7 @@
 
 import sys
 import locale
+import time
 import re
 import os
 from datetime import datetime
@@ -30,7 +31,7 @@ def javascript(selenium, script):
 def main():
     urls = yaml.load(open("urls.yml"))
     
-    time = datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z")
+    folder = datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z")
     jobs = []
     for country, sites in urls.items():
         for site_name, site_url in sites.items():
@@ -44,10 +45,11 @@ def main():
     for job in jobs:
         print "* %s - %s" % (job["site_name"], job["url"])
     
-    if not os.path.exists(time):
-        os.makedirs(time)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
 
-    driver = webdriver.Chrome()
+    # use Firefox as driver because screenshots capture the whole page, not just the viewport
+    driver = webdriver.Firefox()
     driver.set_window_size(1280, 960) # optional
 
     # load all sites before we start taking screenshots
@@ -62,11 +64,13 @@ def main():
         try:
             driver.get(job["url"])
             if job["site_name"] == "Haaretz":
+                print "huh"
                 try:
                     driver.execute_script("closePopUpSubscriptionReminder()")
                 except Exception, e:
                     print e
-            driver.save_screenshot(os.path.join(time, job["filename"]))
+            time.sleep(5)
+            driver.save_screenshot(os.path.join(folder, job["filename"]))
         except Exception, e:
             print "could not download %s" % job["filename"]
             
