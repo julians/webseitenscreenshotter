@@ -1,3 +1,7 @@
+# every website takes about 20 seconds to download, render and screenshot,
+# so we can only do a max of about 90,
+# but less (60 maybe?) would be better
+
 Deutschland:
     Süddeutsche:
         http://www.sueddeutsche.de/
@@ -13,9 +17,21 @@ Deutschland:
         http://www.bild.de/
     ZEIT ONLINE:
         http://www.zeit.de/
+    ZDFheute:
+        http://heute.de/
+    n-tv.de:
+        http://www.n-tv.de/
+    STERN.DE:
+        http://www.stern.de/
 Österreich:
     derStandard:
         http://derstandard.at/
+    ORF.AT:
+        http://www.orf.at/
+    KURIER.at:
+        http://kurier.at/
+    DiePresse.com:
+        http://diepresse.com/
 Schweiz:
     Neue Zürcher Zeitung:
         http://www.nzz.ch/
@@ -26,11 +42,15 @@ UK:
         http://www.theguardian.com/uk
     BBC:
         http://www.bbc.co.uk/
+    Mirror Onlne:
+        http://www.mirror.co.uk/
 USA:
     The New York Times:
         http://www.nytimes.com/
     Washington Post:
         http://www.washingtonpost.com/
+    The Huffington Post:
+        http://www.huffingtonpost.com/
 Frankreich:
     Le Monde.fr:
         http://www.lemonde.fr/
@@ -56,3 +76,34 @@ Griechenland:
         http://www.tovima.gr/
     EnetEnglish.gr:
         http://www.enetenglish.gr/
+Andorra:
+    Diari d’Andorra:
+        http://www.diariandorra.ad
+Portugal:
+    A Bola:
+        http://www.abola.pt
+    PÚBLICO:
+        http://www.publico.pt
+Irland:
+    The Irish Times:
+        http://www.irishtimes.com
+    Irish Independent:
+        http://www.independent.ie
+Schweden:
+    Aftonbladet:
+        http://www.aftonbladet.se
+    Sydsvenskan:
+        http://www.sydsvenskan.se
+    Svenska Dagbladet:
+        http://www.svd.se
+Dänemark:
+    Jyllands-Posten:
+        http://jyllands-posten.dk
+    Berlingste:
+        http://www.b.dk
+Türkei:
+    Hürriyet:
+        http://www.hurriyet.com.tr/
+International:
+    CNN.com International:
+        http://edition.cnn.com/
