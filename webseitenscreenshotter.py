@@ -18,20 +18,24 @@ def get_filename(country, site):
         unidecode.unidecode(unicode(country.lower())),
         re.sub(r"\s", "_", unidecode.unidecode(unicode(site)))
     )
-    
-def javascript(selenium, script):
-    return selenium.get_eval(""" 
-    (function() { 
-            with(this) { 
-              %(script)s 
-            } 
-          }).call(selenium.browserbot.getUserWindow()); 
-    """ % locals())
 
 def main():
+    now = datetime.now()
+    startdate = datetime(2013, 9, 22, 6)
+    enddate = datetime(2013, 9, 23, 20)
+
+    if now < startdate:
+        print "too early for screenshots, will start on %s" % startdate.isoformat()
+        sys.exit()
+    if now > enddate:
+        print "too late for screenshots, stopped on %s" % enddate.isoformat()
+        sys.exit()
+
+    config = yaml.load(open("config.yml"))
     urls = yaml.load(open("urls.yml"))
     
-    folder = datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z")
+    folder = os.path.join(config["save_path"], datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z"))
+
     jobs = []
     for country, sites in urls.items():
         for site_name, site_url in sites.items():
@@ -42,9 +46,9 @@ def main():
             })
     
     print "starting to download:"
-    for job in jobs:
-        print "* %s - %s" % (job["site_name"], job["url"])
-    
+    #for job in jobs:
+    #    print "* %s - %s" % (job["site_name"], job["url"])
+
     if not os.path.exists(folder):
         os.makedirs(folder)
 
@@ -59,12 +63,11 @@ def main():
     
     # take screenshots
     for job in jobs:
-        print job["site_name"]
+        #print job["site_name"]
         
         try:
             driver.get(job["url"])
             if job["site_name"] == "Haaretz":
-                print "huh"
                 try:
                     driver.execute_script("closePopUpSubscriptionReminder()")
                 except Exception, e:
