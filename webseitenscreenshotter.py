@@ -6,6 +6,7 @@ import locale
 import time
 import re
 import os
+import logging
 from datetime import datetime
 import yaml
 import unidecode
@@ -19,33 +20,31 @@ def get_filename(country, site):
         re.sub(r"\s", "_", unidecode.unidecode(unicode(site)))
     )
 
-def log(file, str):
-    file.write("%s\n" % str)
-    file.flush()
-
 def main():
     now = datetime.now()
     startdate = datetime(2013, 9, 22, 6)
     enddate = datetime(2013, 9, 23, 20)
+    
+    logging.basicConfig(filename='webseitenscreenshotter.log', level=logging.INFO, format="%(levelname)s:%(message)s")
 
-    logfile = open("log.txt", "a")
-    log(logfile, "-----------")
-    log(logfile, "starting up at %s" % now.isoformat())
+    logging.info("-----------")
+    logging.info("starting up at %s" % now.isoformat())
+    logging.warning("ho!")
 
     if now < startdate:
-        log(logfile, "too early for screenshots, will start on %s" % startdate.isoformat())
+        logging.info("too early for screenshots, will start on %s" % startdate.isoformat())
         sys.exit()
     if now > enddate:
-        log(logfile, "too late for screenshots, stopped on %s" % enddate.isoformat())
+        logging.info("too late for screenshots, stopped on %s" % enddate.isoformat())
         sys.exit()
     
-    log(logfile, "reading config.yml")
+    logging.info("reading config.yml")
     config = yaml.load(open("config.yml"))
-    log(logfile, "reading urls.yml")
+    logging.info("reading urls.yml")
     urls = yaml.load(open("urls.yml"))
     
     folder = os.path.join(config["save_path"], datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z"))
-    log(logfile, "save folder: %s" % folder)
+    logging.info("save folder: %s" % folder)
 
     jobs = []
     for country, sites in urls.items():
@@ -56,14 +55,14 @@ def main():
                 "site_name": site_name
             })
     
-    log(logfile, "starting to download")
+    logging.info("starting to download")
     #for job in jobs:
     #    print "* %s - %s" % (job["site_name"], job["url"])
     
     if not os.path.exists(folder):
-        log(logfile, "save folder doesn't exist")
+        logging.info("save folder doesn't exist")
         os.makedirs(folder)
-        log(logfile, "created save folder")
+        logging.info("created save folder")
 
     # use Firefox as driver because screenshots capture the whole page, not just the viewport
     driver = webdriver.Firefox()
@@ -72,7 +71,7 @@ def main():
     # load all sites before we start taking screenshots
     # because of cookie warnings, subscription offers etc.
     for job in jobs:
-        log(logfile, "preloading %s" % job["url"])
+        logging.info("preloading %s" % job["url"])
         driver.get(job["url"])
     
     # take screenshots
@@ -85,17 +84,17 @@ def main():
                 try:
                     driver.execute_script("closePopUpSubscriptionReminder()")
                 except Exception, e:
+                    logging.warning("Error executing Haaretz script hack")
                     print e
             time.sleep(5)
             driver.save_screenshot(os.path.join(folder, job["filename"]))
-            log(logfile, "saved %s" % job["filename"])
+            logging.info("saved %s" % job["filename"])
         except Exception, e:
             print "could not download %s" % job["filename"]
-            log(logfile, "could not download %s" % job["filename"])
+            logging.warning("could not download %s" % job["filename"])
             
     driver.quit()
-    log(logfile, "finished")
-    logfile.close()
+    logging.info("finished")
 
 if __name__ == "__main__":
     main()
