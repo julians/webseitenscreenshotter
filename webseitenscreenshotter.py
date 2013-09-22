@@ -24,17 +24,24 @@ def main():
     startdate = datetime(2013, 9, 22, 6)
     enddate = datetime(2013, 9, 23, 20)
 
+    log = open("log.txt", "a")
+    log.write("-----------\n")
+    log.write("starting up at %s\n" % now.isoformat())
+
     if now < startdate:
-        print "too early for screenshots, will start on %s" % startdate.isoformat()
+        log.write("too early for screenshots, will start on %s\n" % startdate.isoformat())
         sys.exit()
     if now > enddate:
-        print "too late for screenshots, stopped on %s" % enddate.isoformat()
+        log.write("too late for screenshots, stopped on %s\n" % enddate.isoformat())
         sys.exit()
-
+    
+    log.write("reading config.yml\n")    
     config = yaml.load(open("config.yml"))
+    log.write("reading urls.yml\n")
     urls = yaml.load(open("urls.yml"))
     
     folder = os.path.join(config["save_path"], datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z"))
+    log.write("save folder: %s\n" % folder)
 
     jobs = []
     for country, sites in urls.items():
@@ -45,12 +52,14 @@ def main():
                 "site_name": site_name
             })
     
-    print "starting to download:"
+    log.write("starting to download\n")
     #for job in jobs:
     #    print "* %s - %s" % (job["site_name"], job["url"])
-
+    
     if not os.path.exists(folder):
+        log.write("save folder doesn't exist\n")
         os.makedirs(folder)
+        log.write("created save folder\n")
 
     # use Firefox as driver because screenshots capture the whole page, not just the viewport
     driver = webdriver.Firefox()
@@ -59,6 +68,7 @@ def main():
     # load all sites before we start taking screenshots
     # because of cookie warnings, subscription offers etc.
     for job in jobs:
+        log.write("preloading %s\n" % job["url"])
         driver.get(job["url"])
     
     # take screenshots
@@ -74,10 +84,14 @@ def main():
                     print e
             time.sleep(5)
             driver.save_screenshot(os.path.join(folder, job["filename"]))
+            log.write("saved %s\n" % job["filename"])
         except Exception, e:
             print "could not download %s" % job["filename"]
+            log.write("could not download %s\n" % job["filename"])
             
     driver.quit()
+    log.write("finished\n")
+    log.close()
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,17 @@
+log.txt
+
+.sass-cache
+.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# TextMate files
+*.tmproj
+*.tmproject
+tmtags
+
+# SublimeText project files
+*.sublime-project
+*.sublime-workspace
