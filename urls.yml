@@ -2,6 +2,31 @@
 # so we can only do a max of about 90,
 # but less (60 maybe?) would be better
 
+Parteien:
+    SPD:
+        http://www.spd.de/
+    CDU:
+        http://www.cdu.de/
+    CSU:
+        http://www.csu.de/
+    GRÜNE:
+        http://www.gruene.de/
+    DIE LINKE:
+        http://www.die-linke.de/
+    FDP:
+        http://www.fdp.de/
+    FDP-Aktuelles:
+        http://www.fdp.de/Aktuelles/255b94/index.html/
+    FDP-Wahl:
+        http://wahl.fdp.de/
+    Piratenpartei:
+        http://www.piratenpartei.de/
+    AfD:
+        https://www.alternativefuer.de/
+    Peer Steinbrück:
+        http://peer-steinbrueck.de/
+    Angela Merkel:
+        http://www.angela-merkel.de/
 Deutschland:
     Süddeutsche:
         http://www.sueddeutsche.de/
@@ -42,7 +67,7 @@ UK:
         http://www.theguardian.com/uk
     BBC:
         http://www.bbc.co.uk/
-    Mirror Onlne:
+    Mirror Online:
         http://www.mirror.co.uk/
 USA:
     The New York Times:
