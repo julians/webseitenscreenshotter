@@ -1,4 +1,5 @@
 webseitenscreenshotter.log
+*.run
 
 .sass-cache
 .tmp

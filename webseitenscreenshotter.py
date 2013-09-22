@@ -7,12 +7,17 @@ import time
 import re
 import os
 import logging
+import signal
 from datetime import datetime
 import yaml
 import unidecode
 from selenium import webdriver
 
 locale.setlocale(locale.LC_ALL, 'de_DE')
+
+def signal_handler(signal, frame):
+    logging.warning("process killed")
+    sys.exit(0)
 
 def get_filename(country, site):
     return "%s-%s.png" % (
@@ -25,11 +30,16 @@ def main():
     startdate = datetime(2013, 9, 22, 6)
     enddate = datetime(2013, 9, 23, 20)
     
+    running = open("%s.run" % now.strftime("%Y-%m-%dT%H-%M-%S%z"), "w")
+    running.write("ran on %s\n" % now.isoformat())
+    running.close()
+    
     logging.basicConfig(filename='webseitenscreenshotter.log', level=logging.INFO, format="%(levelname)s:%(message)s")
+    
+    signal.signal(signal.SIGINT, signal_handler)
 
     logging.info("-----------")
     logging.info("starting up at %s" % now.isoformat())
-    logging.warning("ho!")
 
     if now < startdate:
         logging.info("too early for screenshots, will start on %s" % startdate.isoformat())
@@ -43,7 +53,7 @@ def main():
     logging.info("reading urls.yml")
     urls = yaml.load(open("urls.yml"))
     
-    folder = os.path.join(config["save_path"], datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z"))
+    folder = os.path.join(config["save_path"], now.strftime("%Y-%m-%dT%H-%M-%S%z"))
     logging.info("save folder: %s" % folder)
 
     jobs = []
