@@ -19,29 +19,33 @@ def get_filename(country, site):
         re.sub(r"\s", "_", unidecode.unidecode(unicode(site)))
     )
 
+def log(file, str):
+    file.write("%s\n" % str)
+    file.flush()
+
 def main():
     now = datetime.now()
     startdate = datetime(2013, 9, 22, 6)
     enddate = datetime(2013, 9, 23, 20)
 
-    log = open("log.txt", "a")
-    log.write("-----------\n")
-    log.write("starting up at %s\n" % now.isoformat())
+    logfile = open("log.txt", "a")
+    log(logfile, "-----------")
+    log(logfile, "starting up at %s" % now.isoformat())
 
     if now < startdate:
-        log.write("too early for screenshots, will start on %s\n" % startdate.isoformat())
+        log(logfile, "too early for screenshots, will start on %s" % startdate.isoformat())
         sys.exit()
     if now > enddate:
-        log.write("too late for screenshots, stopped on %s\n" % enddate.isoformat())
+        log(logfile, "too late for screenshots, stopped on %s" % enddate.isoformat())
         sys.exit()
     
-    log.write("reading config.yml\n")    
+    log(logfile, "reading config.yml")
     config = yaml.load(open("config.yml"))
-    log.write("reading urls.yml\n")
+    log(logfile, "reading urls.yml")
     urls = yaml.load(open("urls.yml"))
     
     folder = os.path.join(config["save_path"], datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z"))
-    log.write("save folder: %s\n" % folder)
+    log(logfile, "save folder: %s" % folder)
 
     jobs = []
     for country, sites in urls.items():
@@ -52,14 +56,14 @@ def main():
                 "site_name": site_name
             })
     
-    log.write("starting to download\n")
+    log(logfile, "starting to download")
     #for job in jobs:
     #    print "* %s - %s" % (job["site_name"], job["url"])
     
     if not os.path.exists(folder):
-        log.write("save folder doesn't exist\n")
+        log(logfile, "save folder doesn't exist")
         os.makedirs(folder)
-        log.write("created save folder\n")
+        log(logfile, "created save folder")
 
     # use Firefox as driver because screenshots capture the whole page, not just the viewport
     driver = webdriver.Firefox()
@@ -68,7 +72,7 @@ def main():
     # load all sites before we start taking screenshots
     # because of cookie warnings, subscription offers etc.
     for job in jobs:
-        log.write("preloading %s\n" % job["url"])
+        log(logfile, "preloading %s" % job["url"])
         driver.get(job["url"])
     
     # take screenshots
@@ -84,14 +88,14 @@ def main():
                     print e
             time.sleep(5)
             driver.save_screenshot(os.path.join(folder, job["filename"]))
-            log.write("saved %s\n" % job["filename"])
+            log(logfile, "saved %s" % job["filename"])
         except Exception, e:
             print "could not download %s" % job["filename"]
-            log.write("could not download %s\n" % job["filename"])
+            log(logfile, "could not download %s" % job["filename"])
             
     driver.quit()
-    log.write("finished\n")
-    log.close()
+    log(logfile, "finished")
+    logfile.close()
 
 if __name__ == "__main__":
     main()
