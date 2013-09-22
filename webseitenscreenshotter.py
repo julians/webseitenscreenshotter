@@ -20,9 +20,10 @@ def signal_handler(signal, frame):
     sys.exit(0)
 
 def get_filename(country, site):
-    return "%s-%s.png" % (
+    return "%s-%s-%s.png" % (
         unidecode.unidecode(unicode(country.lower())),
-        re.sub(r"\s", "_", unidecode.unidecode(unicode(site)))
+        re.sub(r"\s", "_", unidecode.unidecode(unicode(site))),
+        datetime.now().strftime("%Y-%m-%dT%H-%M-%S%z")
     )
 
 def main():
@@ -60,15 +61,13 @@ def main():
     for country, sites in urls.items():
         for site_name, site_url in sites.items():
             jobs.append({
-                "filename": get_filename(country, site_name),
+                "country": country,
                 "url": site_url,
                 "site_name": site_name
             })
     
     logging.info("starting to download")
-    #for job in jobs:
-    #    print "* %s - %s" % (job["site_name"], job["url"])
-    
+
     if not os.path.exists(folder):
         logging.info("save folder doesn't exist")
         os.makedirs(folder)
@@ -84,14 +83,14 @@ def main():
         logging.info("preloading %s" % job["url"])
         driver.get(job["url"])
         time.sleep(1)
-        for x in range(1, 40):
-            driver.execute_script("window.scrollTo(0, document.body.scrollHeight/40*%d);" % x)
-            time.sleep(0.05)
+        for x in range(1, 35):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight/35*%d);" % x)
+            time.sleep(0.035)
         time.sleep(1)
     
     # take screenshots
     for job in jobs:
-        #print job["site_name"]
+        filename = get_filename(job["country"], job["site_name"])
         
         try:
             driver.get(job["url"])
@@ -102,15 +101,15 @@ def main():
                     logging.warning("Error executing Haaretz script hack")
                     print e
             time.sleep(1)
-            for x in range(1, 40):
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight/40*%d);" % x)
-                time.sleep(0.05)
+            for x in range(1, 35):
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight/35*%d);" % x)
+                time.sleep(0.035)
             time.sleep(2)
-            driver.save_screenshot(os.path.join(folder, job["filename"]))
-            logging.info("saved %s" % job["filename"])
+            driver.save_screenshot(os.path.join(folder, filename))
+            logging.info("saved %s" % filename)
         except Exception, e:
             print "could not download %s" % job["filename"]
-            logging.warning("could not download %s" % job["filename"])
+            logging.warning("could not download %s" % filename)
             
     driver.quit()
     logging.info("finished")
