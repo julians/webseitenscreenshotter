@@ -83,6 +83,11 @@ def main():
     for job in jobs:
         logging.info("preloading %s" % job["url"])
         driver.get(job["url"])
+        time.sleep(1)
+        for x in range(1, 40):
+            driver.execute_script("window.scrollTo(0, document.body.scrollHeight/40*%d);" % x)
+            time.sleep(0.05)
+        time.sleep(1)
     
     # take screenshots
     for job in jobs:
@@ -96,7 +101,11 @@ def main():
                 except Exception, e:
                     logging.warning("Error executing Haaretz script hack")
                     print e
-            time.sleep(5)
+            time.sleep(1)
+            for x in range(1, 40):
+                driver.execute_script("window.scrollTo(0, document.body.scrollHeight/40*%d);" % x)
+                time.sleep(0.05)
+            time.sleep(2)
             driver.save_screenshot(os.path.join(folder, job["filename"]))
             logging.info("saved %s" % job["filename"])
         except Exception, e:
